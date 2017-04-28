@@ -150,28 +150,36 @@ function OneSignal(apiKey, appId, sandbox) {
    * @param  {Array}  oneSignalIds a list of OneSignal devices ids
    * @return {Promise}
    */
-  this.createNotification = function(message, data, oneSignalIds) {
+  this.createNotification = function(params, data, oneSignalIds) {
+    var body = {
+      app_id: APP_ID,
+      data: data
+    };
+
+    if (oneSignalIds) {
+      body.include_player_ids = oneSignalIds
+    }
+
+    if (typeof params == 'string') {
+      body.contents = { en: params };
+    }
+    else {
+      Object.assign(body, params);
+    }
 
     var options = {
       method: 'POST',
       url: 'https://onesignal.com/api/v1/notifications',
-      headers: { 
+      headers: {
         authorization: 'Basic ' + API_KEY,
         'cache-control': 'no-cache',
-        'content-type': 'application/json; charset=utf-8' 
+        'content-type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify({
-        app_id: APP_ID,
-        include_player_ids: oneSignalIds,
-        contents: {
-          en: message
-        },
-        data: data
-      })
+      body: JSON.stringify(body)
     };
 
     return new Promise(function(resolve, reject) {
-      
+
       request(options, function(error, response, body) {
 
         responseHandle(error, response, body, reject, resolve);
@@ -179,7 +187,6 @@ function OneSignal(apiKey, appId, sandbox) {
       });
 
     });
-
   };
   
 }
