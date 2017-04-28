@@ -150,22 +150,16 @@ function OneSignal(apiKey, appId, sandbox) {
    * @param  {Array}  oneSignalIds a list of OneSignal devices ids
    * @return {Promise}
    */
-  this.createNotification = function(params, data, oneSignalIds) {
+  this.createNotification = function(title, data, params) {
     var body = {
       app_id: APP_ID,
-      data: data
+      data: data,
+      contents: {
+        en: title
+      }
     };
-
-    if (oneSignalIds) {
-      body.include_player_ids = oneSignalIds
-    }
-
-    if (typeof params == 'string') {
-      body.contents = { en: params };
-    }
-    else {
-      Object.assign(body, params);
-    }
+      
+    Object.assign(body, params);
 
     var options = {
       method: 'POST',
